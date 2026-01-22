@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patel Wealth Edge - Return Calculator</title>
+    <style>
+        :root {
+            --primary: #0a2540; /* Navy Blue */
+            --gold: #c5a059; /* Gold */
+            --bg: #f4f7fa;
+            --white: #ffffff;
+            --green: #2e7d32;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h2 {
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: #eef2f6;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: bold;
+            color: #666;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: var(--gold);
+            box-shadow: 0 4px 10px rgba(10, 37, 64, 0.2);
+        }
+
+        /* Inputs */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box; /* Fixes padding width issue */
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        /* Result Section */
+        .result-box {
+            background: #f8fff8;
+            border: 1px solid #c8e6c9;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .total-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--green);
+            margin: 10px 0;
+        }
+
+        .details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #555;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #ccc;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: var(--gold);
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #061a2e;
+        }
+
+        /* Visual Bar */
+        .visual-bar-container {
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 15px;
+            display: flex;
+        }
+        
+        .bar-invested { background: #0a2540; height: 100%; }
+        .bar-profit { background: #c5a059; height: 100%; }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        .dot { height: 10px; width: 10px; display: inline-block; border-radius: 50%; margin-right: 5px; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>Patel Wealth Edge</h2>
+        <p>Financial Growth Calculator</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('sip')">SIP (Monthly)</button>
+        <button class="tab-btn" onclick="switchTab('lumpsum')">Lumpsum (One-Time)</button>
+    </div>
+
+    <div id="sipForm">
+        <div class="input-group">
+            <label>Monthly Investment (₹)</label>
+            <input type="number" id="sipAmount" value="5000" placeholder="Ex: 5000">
+        </div>
+        <div class="input-group">
+            <label>Expected Return Rate (%)</label>
+            <input type="number" id="sipRate" value="12" placeholder="Ex: 12">
+        </div>
+        <div class="input-group">
+            <label>Time Period (Years)</label>
+            <input type="number" id="sipYears" value="10" placeholder="Ex: 10">
+        </div>
+        <button class="btn" onclick="calculateSIP()">Calculate SIP Returns</button>
+    </div>
+
+    <div id="lumpsumForm" style="display: none;">
+        <div class="input-group">
+            <label>Total Investment (₹)</label>
+            <input type="number" id="lumpAmount" value="100000" placeholder="Ex: 100000">
+        </div>
+        <div class="input-group">
+            <label>Expected Return Rate (%)</label>
+            <input type="number" id="lumpRate" value="12" placeholder="Ex: 12">
+        </div>
+        <div class="input-group">
+            <label>Time Period (Years)</label>
+            <input type="number" id="lumpYears" value="10" placeholder="Ex: 10">
+        </div>
+        <button class="btn" onclick="calculateLumpsum()">Calculate Lumpsum Returns</button>
+    </div>
+
+    <div class="result-box" id="resultBox" style="display:none;">
+        <p style="margin:0; font-size:14px; color:#666;">Expected Maturity Value</p>
+        <div class="total-value" id="displayTotal">₹ 0</div>
+        
+        <div class="visual-bar-container">
+            <div id="barInvested" class="bar-invested" style="width: 50%"></div>
+            <div id="barProfit" class="bar-profit" style="width: 50%"></div>
+        </div>
+        <div class="legend">
+            <span><span class="dot" style="background:#0a2540"></span>Invested</span>
+            <span><span class="dot" style="background:#c5a059"></span>Wealth Gained</span>
+        </div>
+
+        <div class="details">
+            <div style="text-align:left;">
+                <span style="display:block; font-size:12px;">Invested Amount</span>
+                <strong style="color:#0a2540" id="displayInvested">₹ 0</strong>
+            </div>
+            <div style="text-align:right;">
+                <span style="display:block; font-size:12px;">Est. Returns</span>
+                <strong style="color:#c5a059" id="displayProfit">₹ 0</strong>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function switchTab(type) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        
+        if (type === 'sip') {
+            document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+            document.getElementById('sipForm').style.display = 'block';
+            document.getElementById('lumpsumForm').style.display = 'none';
+        } else {
+            document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+            document.getElementById('sipForm').style.display = 'none';
+            document.getElementById('lumpsumForm').style.display = 'block';
+        }
+        document.getElementById('resultBox').style.display = 'none';
+    }
+
+    function formatCurrency(num) {
+        return "₹ " + Math.round(num).toLocaleString('en-IN');
+    }
+
+    function calculateSIP() {
+        let P = parseFloat(document.getElementById('sipAmount').value);
+        let r = parseFloat(document.getElementById('sipRate').value);
+        let n = parseFloat(document.getElementById('sipYears').value);
+
+        if (!P || !r || !n) { alert("Please fill all details"); return; }
+
+        let i = r / 1200; // Monthly Rate
+        let months = n * 12;
+
+        // Future Value Formula for SIP
+        let FV = P * ((Math.pow(1 + i, months) - 1) / i) * (1 + i);
+        let invested = P * months;
+        let profit = FV - invested;
+
+        updateUI(invested, profit, FV);
+    }
+
+    function calculateLumpsum() {
+        let P = parseFloat(document.getElementById('lumpAmount').value);
+        let r = parseFloat(document.getElementById('lumpRate').value);
+        let n = parseFloat(document.getElementById('lumpYears').value);
+
+        if (!P || !r || !n) { alert("Please fill all details"); return; }
+
+        // Future Value Formula for Lumpsum
+        let FV = P * Math.pow((1 + r / 100), n);
+        let invested = P;
+        let profit = FV - invested;
+
+        updateUI(invested, profit, FV);
+    }
+
+    function updateUI(invested, profit, total) {
+        document.getElementById('resultBox').style.display = 'block';
+        document.getElementById('displayTotal').innerText = formatCurrency(total);
+        document.getElementById('displayInvested').innerText = formatCurrency(invested);
+        document.getElementById('displayProfit').innerText = formatCurrency(profit);
+
+        // Update Visual Bar Widths
+        let totalVal = invested + profit;
+        let invPercent = (invested / totalVal) * 100;
+        let profPercent = (profit / totalVal) * 100;
+
+        document.getElementById('barInvested').style.width = invPercent + "%";
+        document.getElementById('barProfit').style.width = profPercent + "%";
+    }
+</script>
+
+</body>
+  </html>
